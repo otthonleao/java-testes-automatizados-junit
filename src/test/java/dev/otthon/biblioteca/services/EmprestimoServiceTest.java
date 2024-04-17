@@ -1,9 +1,8 @@
 package dev.otthon.biblioteca.services;
 
+import dev.otthon.biblioteca.builders.ClienteBuilder;
+import dev.otthon.biblioteca.builders.ObraBuilder;
 import dev.otthon.biblioteca.enums.Reputacao;
-import dev.otthon.biblioteca.enums.Tipo;
-import dev.otthon.biblioteca.models.Autor;
-import dev.otthon.biblioteca.models.Cliente;
 import dev.otthon.biblioteca.models.Obra;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,13 +22,11 @@ public class EmprestimoServiceTest {
         emprestimoService = new EmprestimoService();
     }
 
-
     @Test
     void quandoMetodoNovoForChamadoDeveRetornarUmEmprestimo() {
         // CENÁRIO
-        var cliente = new Cliente(1L, "Cliente Teste", LocalDate.now(), "123.123.123-11", Reputacao.REGULAR);
-        var autor = new Autor(1L, "Autor Teste", LocalDate.now(), null);
-        var obra = new Obra(1L, "Obra Teste", 100, Tipo.LIVRO, autor);
+        var cliente = ClienteBuilder.builder().build();
+        var obra = ObraBuilder.builder().build();
 
         // EXECUÇÃO
         var emprestimo = emprestimoService.novo(cliente, List.of(obra));
@@ -44,9 +41,8 @@ public class EmprestimoServiceTest {
     @Test
     void quandoMetodoNovoForChamadoComClienteDeReputacaoRuimDeveRetornarUmEmprestimoEmUmDia() {
         // CENÁRIO
-        var cliente = new Cliente(1L, "Cliente Teste", LocalDate.now(), "123.123.123-11", Reputacao.REGULAR);
-        var autor = new Autor(1L, "Autor Teste", LocalDate.now(), null);
-        var obra = new Obra(1L, "Obra Teste", 100, Tipo.LIVRO, autor);
+        var cliente = ClienteBuilder.builder().reputacao(Reputacao.RUIM).build();
+        var obra = ObraBuilder.builder().build();
         // EXECUÇÃO
         var emprestimo = emprestimoService.novo(cliente, List.of(obra));
         // VERIFICAÇÃO
@@ -56,9 +52,8 @@ public class EmprestimoServiceTest {
     @Test
     void quandoMetodoNovoForChamadoComClienteDeReputacaoRegularDeveRetornarUmEmprestimoEmTresDias() {
         // CENÁRIO
-        var cliente = new Cliente(1L, "Cliente Teste", LocalDate.now(), "123.123.123-11", Reputacao.REGULAR);
-        var autor = new Autor(1L, "Autor Teste", LocalDate.now(), null);
-        var obra = new Obra(1L, "Obra Teste", 100, Tipo.LIVRO, autor);
+        var cliente = ClienteBuilder.builder().build();
+        var obra = ObraBuilder.builder().build();
         // EXECUÇÃO
         var emprestimo = emprestimoService.novo(cliente, List.of(obra));
         // VERIFICAÇÃO
@@ -68,9 +63,8 @@ public class EmprestimoServiceTest {
     @Test
     void quandoMetodoNovoForChamadoComClienteDeReputacaoBoaDeveRetornarUmEmprestimoEmCincoDias() {
         // CENÁRIO
-        var cliente = new Cliente(1L, "Cliente Teste", LocalDate.now(), "123.123.123-11", Reputacao.REGULAR);
-        var autor = new Autor(1L, "Autor Teste", LocalDate.now(), null);
-        var obra = new Obra(1L, "Obra Teste", 100, Tipo.LIVRO, autor);
+        var cliente = ClienteBuilder.builder().reputacao(Reputacao.BOA).build();
+        var obra = ObraBuilder.builder().build();
         // EXECUÇÃO
         var emprestimo = emprestimoService.novo(cliente, List.of(obra));
         // VERIFICAÇÃO
@@ -80,7 +74,7 @@ public class EmprestimoServiceTest {
     @Test
     void quandoMetodoNovoForChamadoComObraNuloDeveLancarUmaExcecaoDoTipoIllegalArgumentException() {
         // CENÁRIO
-        var cliente = new Cliente(1L, "Cliente Teste", LocalDate.now(), "123.123.123-11", Reputacao.REGULAR);
+        var cliente = ClienteBuilder.builder().build();
         var mensagemEsperada = "Obras não podem ser nulo e nem vazio";
 
         var exception = assertThrows(IllegalArgumentException.class, () -> emprestimoService.novo(cliente, null));
@@ -90,7 +84,7 @@ public class EmprestimoServiceTest {
     @Test
     void quandoMetodoNovoForChamadoComObraVaziaDeveLancarUmaExcecaoDoTipoIllegalArgumentException() {
         // CENÁRIO
-        var cliente = new Cliente(1L, "Cliente Teste", LocalDate.now(), "123.123.123-11", Reputacao.REGULAR);
+        var cliente = ClienteBuilder.builder().build();
         var obras = new ArrayList<Obra>();
         var mensagemEsperada = "Obras não podem ser nulo e nem vazio";
 
@@ -101,9 +95,7 @@ public class EmprestimoServiceTest {
     @Test
     void quandoMetodoNovoForChamadoComClienteNuloDeveLancarUmaExcecaoDoTipoIllegalArgumentException() {
         // CENÁRIO
-        var autor = new Autor(1L, "Autor Teste", LocalDate.now(), null);
-        var obra = new Obra(1L, "Obra Teste", 100, Tipo.LIVRO, autor);
-
+        var obra = ObraBuilder.builder().build();
         var mensagemEsperada = "Cliente não pode ser nulo";
 
         var exception = assertThrows(IllegalArgumentException.class, () -> emprestimoService.novo(null, List.of(obra)));
