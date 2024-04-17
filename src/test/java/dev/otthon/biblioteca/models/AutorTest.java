@@ -15,7 +15,8 @@ public class AutorTest {
         // EXECUÇÃO - O código a ser testado.
         var estaVivo = autor.estaVivo();
         // VERIFICAÇÃO - Teste propriamente dito.
-        Assertions.assertEquals(true, estaVivo);
+        //Assertions.assertEquals(true, estaVivo);
+        Assertions.assertTrue(estaVivo);
     }
 
    @Test
@@ -24,6 +25,7 @@ public class AutorTest {
         autor.setDataFalecimento(LocalDate.now());
 
         var estaVivo = autor.estaVivo();
-        Assertions.assertEquals(false, estaVivo);
+        //Assertions.assertEquals(false, estaVivo);
+        Assertions.assertFalse(estaVivo);
     }
 }
