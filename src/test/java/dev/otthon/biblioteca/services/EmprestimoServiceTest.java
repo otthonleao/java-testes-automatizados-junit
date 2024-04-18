@@ -26,6 +26,9 @@ public class EmprestimoServiceTest {
     @Mock
     private EmprestimoDAO emprestimoDAO;
 
+    @Mock
+    private NotificacaoService notificacaoService;
+
     @InjectMocks
     private EmprestimoService emprestimoService;
 
@@ -119,9 +122,9 @@ public class EmprestimoServiceTest {
         Mockito.when(emprestimoDAO.buscarTodos()).thenReturn(emprestimos);
 
         // EXECUÇÃO
-        var notificacoes = emprestimoService.notificarAtrasos();
+        emprestimoService.notificarAtrasos();
 
         // VERIFICAÇÃO
-        assertEquals(1, notificacoes);
+        Mockito.verify(notificacaoService).notificar(emprestimos.get(1));
     }
 }
