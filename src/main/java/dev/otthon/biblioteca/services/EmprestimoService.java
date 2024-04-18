@@ -1,5 +1,6 @@
 package dev.otthon.biblioteca.services;
 
+import dev.otthon.biblioteca.dao.EmprestimoDAO;
 import dev.otthon.biblioteca.enums.Reputacao;
 import dev.otthon.biblioteca.models.Cliente;
 import dev.otthon.biblioteca.models.Emprestimo;
@@ -9,6 +10,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class EmprestimoService {
+
+    private EmprestimoDAO emprestimoDAO;
+
+    public EmprestimoService(EmprestimoDAO emprestimoDAO) {
+        this.emprestimoDAO = emprestimoDAO;
+    }
 
     public Emprestimo novo(Cliente cliente, List<Obra> obras){
 
@@ -35,4 +42,18 @@ public class EmprestimoService {
         return emprestimo;
     }
 
+    public int notificarAtrasos() {
+        var notificacoes = 0;
+        var hoje = LocalDate.now();
+
+        var emprestimos = emprestimoDAO.buscarTodos();
+
+        for (Emprestimo emprestimo : emprestimos) {
+            var estaAtrasado = emprestimo.getDataDevolucao().isBefore(hoje);
+            if (estaAtrasado) {
+                notificacoes++;
+            }
+        }
+        return notificacoes;
+    }
 }

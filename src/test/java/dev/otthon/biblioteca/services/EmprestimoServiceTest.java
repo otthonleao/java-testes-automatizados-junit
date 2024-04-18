@@ -1,11 +1,18 @@
 package dev.otthon.biblioteca.services;
 
 import dev.otthon.biblioteca.builders.ClienteBuilder;
+import dev.otthon.biblioteca.builders.EmprestimoBuilder;
 import dev.otthon.biblioteca.builders.ObraBuilder;
+import dev.otthon.biblioteca.dao.EmprestimoDAO;
 import dev.otthon.biblioteca.enums.Reputacao;
 import dev.otthon.biblioteca.models.Obra;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,14 +20,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 public class EmprestimoServiceTest {
 
-    private EmprestimoService emprestimoService;
+    @Mock
+    private EmprestimoDAO emprestimoDAO;
 
-    @BeforeEach
-    public void setUp() {
-        emprestimoService = new EmprestimoService();
-    }
+    @InjectMocks
+    private EmprestimoService emprestimoService;
 
     @Test
     void quandoMetodoNovoForChamadoDeveRetornarUmEmprestimo() {
@@ -100,5 +107,21 @@ public class EmprestimoServiceTest {
 
         var exception = assertThrows(IllegalArgumentException.class, () -> emprestimoService.novo(null, List.of(obra)));
         assertEquals(mensagemEsperada, exception.getMessage());
+    }
+
+    @Test
+    void quandoMetodoNotificarAtrasoForChamadoDeveRetornarONumeroDeNotificacoes() {
+        // CENÁRIO
+        var emprestimos = List.of(
+                EmprestimoBuilder.builder().build(),
+                EmprestimoBuilder.builder().dataDevolucao(LocalDate.now().minusDays(1)).build()
+        );
+        Mockito.when(emprestimoDAO.buscarTodos()).thenReturn(emprestimos);
+
+        // EXECUÇÃO
+        var notificacoes = emprestimoService.notificarAtrasos();
+
+        // VERIFICAÇÃO
+        assertEquals(1, notificacoes);
     }
 }
